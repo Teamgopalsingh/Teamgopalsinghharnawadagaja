@@ -1,0 +1,92 @@
+name: Build Team GopalSingh APK
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Extract ZIP
+        shell: bash
+        run: |
+          set -e
+          mkdir -p project
+          ZIP_FILE="$(find . -maxdepth 1 -type f -iname '*.zip' | head -n 1)"
+
+          if [ -z "$ZIP_FILE" ]; then
+            echo "ERROR: ZIP file not found in repository root."
+            exit 1
+          fi
+
+          echo "Using ZIP: $ZIP_FILE"
+          unzip -q "$ZIP_FILE" -d project
+
+      - name: Find Android Gradle Project
+        shell: bash
+        run: |
+          set -e
+
+          GRADLEW_PATH="$(find project -type f -name 'gradlew' | head -n 1)"
+
+          if [ -z "$GRADLEW_PATH" ]; then
+            echo "ERROR: gradlew was not found inside the ZIP."
+            find project -maxdepth 5 -type f | head -n 200
+            exit 1
+          fi
+
+          PROJECT_DIR="$(dirname "$GRADLEW_PATH")"
+
+          echo "GRADLEW_PATH=$GRADLEW_PATH"
+          echo "PROJECT_DIR=$PROJECT_DIR"
+
+          echo "GRADLEW_PATH=$GRADLEW_PATH" >> "$GITHUB_ENV"
+          echo "PROJECT_DIR=$PROJECT_DIR" >> "$GITHUB_ENV"
+
+      - name: Build Debug APK
+        shell: bash
+        run: |
+          set -e
+          cd "$PROJECT_DIR"
+
+          sed -i 's/\r$//' gradlew
+          chmod +x gradlew
+
+          echo "Building from: $(pwd)"
+          echo "Using Gradle wrapper: $PWD/gradlew"
+
+          ./gradlew --no-daemon assembleDebug
+
+      - name: Find APK
+        shell: bash
+        run: |
+          set -e
+
+          echo "APK files found:"
+          find . -type f -path '*/build/outputs/apk/*.apk' -print
+
+          APK="$(find . -type f -path '*/build/outputs/apk/*.apk' | head -n 1)"
+
+          if [ -z "$APK" ]; then
+            echo "ERROR: APK was not generated."
+            exit 1
+          fi
+
+          echo "APK=$APK" >> "$GITHUB_ENV"
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Team-GopalSingh-APK
+          path: ${{ env.APK }}
+          if-no-files-found: error
