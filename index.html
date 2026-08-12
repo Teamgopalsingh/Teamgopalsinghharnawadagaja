@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>टीम गोपालसिंह – हरनावदा गजा | Web Admin Dashboard</title>
+  
+  <!-- FontAwesome & Google Fonts -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- Non-Government Disclaimer Banner -->
+  <div class="disclaimer-banner" id="disclaimerBanner">
+    <span class="badge-gov-notice"><i class="fa-solid fa-shield-halved"></i> सूचना</span>
+    <span id="disclaimerText">यह एक स्वतंत्र सामाजिक एवं विकास सेवा मंच है। यह किसी भी सरकारी विभाग का आधिकारिक पोर्टल नहीं है। सरकारी शिकायत पंजीकरण हेतु <a href="https://sampark.rajasthan.gov.in/" target="_blank" id="samparkLinkText">राजस्थान सम्पर्क पोर्टल (181)</a> का उपयोग करें।</span>
+  </div>
+
+  <div id="app">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="brand-emblem">टीजी</div>
+        <div class="brand-text">
+          <h1>टीम गोपालसिंह</h1>
+          <p>हरनावदा गजा (झालरापाटन)</p>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-title">मुख्य प्रबन्धन</div>
+        <a class="nav-link active" data-view="overview-view">
+          <i class="fa-solid fa-chart-pie"></i>
+          <span>ओवरव्यू (Dashboard)</span>
+        </a>
+        <a class="nav-link" data-view="complaints-view">
+          <i class="fa-solid fa-clipboard-list"></i>
+          <span>शिकायत निस्तारण</span>
+          <span class="badge-counter" id="complaintsBadge">0</span>
+        </a>
+        <a class="nav-link" data-view="dev-works-view">
+          <i class="fa-solid fa-person-digging"></i>
+          <span>विकास कार्य ट्रैकर</span>
+        </a>
+        <a class="nav-link" data-view="officers-view">
+          <i class="fa-solid fa-user-tie"></i>
+          <span>अधिकारी डायरेक्टरी</span>
+        </a>
+
+        <div class="nav-section-title">डेटा एवं सत्यापन</div>
+        <a class="nav-link" data-view="election-data-view">
+          <i class="fa-solid fa-box-archive"></i>
+          <span>चुनाव डेटा सेन्टर (AC-198)</span>
+        </a>
+        <a class="nav-link" data-view="verification-view">
+          <i class="fa-solid fa-circle-check"></i>
+          <span>सत्यापन कतार (Review)</span>
+          <span class="badge-counter" id="verificationBadge">0</span>
+        </a>
+        <a class="nav-link" data-view="social-media-view">
+          <i class="fa-solid fa-share-nodes"></i>
+          <span>सोशल मीडिया एवं सम्पर्क</span>
+        </a>
+
+        <div class="nav-section-title">प्रशासन एवं रिपोर्ट</div>
+        <a class="nav-link" data-view="audit-logs-view">
+          <i class="fa-solid fa-file-shield"></i>
+          <span>ऑडिट लॉग्स (Audit Logs)</span>
+        </a>
+        <a class="nav-link" data-view="reports-view">
+          <i class="fa-solid fa-file-arrow-down"></i>
+          <span>रिपोर्ट्स एवं विश्लेषण</span>
+        </a>
+        <a class="nav-link" data-view="settings-view">
+          <i class="fa-solid fa-sliders"></i>
+          <span>ऐप सेटिंग्स & अस्वीकरण</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="active-role-card">
+          <div class="role-icon" id="roleIcon"><i class="fa-solid fa-user-shield"></i></div>
+          <div class="role-info">
+            <h4 id="currentRoleTitle">Super Admin</h4>
+            <p id="currentRoleAccess">Full System Access</p>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+      <!-- Top Navbar -->
+      <header class="top-header">
+        <div class="header-left">
+          <button class="mobile-toggle-btn" id="mobileToggleBtn">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+          <div class="page-title-box">
+            <h2 id="currentPageTitle">ओवरव्यू (Dashboard)</h2>
+            <p id="currentPageSubtitle">टीम गोपालसिंह - हरनावदा गजा प्रशासनिक डैशबोर्ड</p>
+          </div>
+        </div>
+
+        <div class="header-search">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" id="globalSearchInput" placeholder="शिकायत, अधिकारी या कार्य खोजें...">
+        </div>
+
+        <div class="header-right">
+          <!-- Role Switcher for RBAC Demonstration -->
+          <div class="role-switcher-box">
+            <label for="rbacSelect"><i class="fa-solid fa-shield-cat"></i> रोल चुनें:</label>
+            <select id="rbacSelect">
+              <option value="SUPER_ADMIN">Super Admin (सुपर एडमिन)</option>
+              <option value="COMPLAINT_ADMIN">Complaint Admin (शिकायत एडमिन)</option>
+              <option value="DEV_ADMIN">Development Admin (विकास एडमिन)</option>
+              <option value="ELECTION_ADMIN">Election Data Admin (चुनाव डेटा एडमिन)</option>
+              <option value="VERIFICATION_ADMIN">Verification Admin (सत्यापन एडमिन)</option>
+            </select>
+          </div>
+
+          <div class="clock-display" id="clockDisplay">
+            <i class="fa-regular fa-clock"></i> <span id="timeString">--:--:--</span>
+          </div>
+
+          <div class="user-profile-btn">
+            <div class="user-avatar" id="userAvatar">GS</div>
+            <div class="user-details">
+              <span class="user-name" id="userNameDisplay">गोपाल सिंह</span>
+              <span class="user-role-badge" id="userBadgeDisplay">सुपर एडमिन</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Content Body Area -->
+      <main class="content-body">
+
+        <!-- 1. OVERVIEW VIEW -->
+        <section class="view-section active" id="overview-view">
+          <div class="stats-grid">
+            <div class="stat-card blue">
+              <div class="stat-header">
+                <span class="stat-title">कुल शिकायतें</span>
+                <div class="stat-icon"><i class="fa-solid fa-clipboard-list"></i></div>
+              </div>
+              <div class="stat-value" id="statTotalComplaints">0</div>
+              <div class="stat-footer">
+                <span class="stat-trend up"><i class="fa-solid fa-arrow-trend-up"></i> +12%</span> इस माह
+              </div>
+            </div>
+
+            <div class="stat-card green">
+              <div class="stat-header">
+                <span class="stat-title">निस्तारित मामले</span>
+                <div class="stat-icon"><i class="fa-solid fa-circle-check"></i></div>
+              </div>
+              <div class="stat-value" id="statResolvedComplaints">0</div>
+              <div class="stat-footer">
+                <span class="stat-trend up" id="statResolvedRate">0%</span> सफलता दर
+              </div>
+            </div>
+
+            <div class="stat-card orange">
+              <div class="stat-header">
+                <span class="stat-title">विकास परियोजनाएं</span>
+                <div class="stat-icon"><i class="fa-solid fa-person-digging"></i></div>
+              </div>
+              <div class="stat-value" id="statDevProjects">0</div>
+              <div class="stat-footer">
+                <span class="stat-trend" id="statDevActive">0 निर्माणाधीन</span>
+              </div>
+            </div>
+
+            <div class="stat-card purple">
+              <div class="stat-header">
+                <span class="stat-title">सत्यापन हेतु लंबित</span>
+                <div class="stat-icon"><i class="fa-solid fa-hourglass-half"></i></div>
+              </div>
+              <div class="stat-value" id="statPendingVerification">0</div>
+              <div class="stat-footer">
+                <span class="stat-trend">सत्यापन कतार में</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Access Cards & Highlights -->
+          <div class="form-row">
+            <div class="panel" style="flex: 2;">
+              <div class="panel-header">
+                <div class="panel-title"><i class="fa-solid fa-bolt"></i> हाल ही की शिकायतें (Recent Complaints)</div>
+                <button class="btn btn-sm btn-outline-gold" onclick="switchView('complaints-view')">सभी देखें</button>
+              </div>
+              <div class="panel-body">
+                <div class="table-responsive">
+                  <table class="data-table" id="recentComplaintsTable">
+                    <thead>
+                      <tr>
+                        <th>आईडी</th>
+                        <th>नागरिक</th>
+                        <th>विषय / ग्राम</th>
+                        <th>स्थिति</th>
+                        <th>कार्रवाई</th>
+                      </tr>
+                    </thead>
+                    <tbody></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <div class="panel" style="flex: 1;">
+              <div class="panel-header">
+                <div class="panel-title"><i class="fa-solid fa-bullhorn"></i> टीम हेल्पलाइन एवं सोशल मीडिया</div>
+              </div>
+              <div class="panel-body" id="overviewSocialList">
+                <!-- Populated via JS -->
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 2. COMPLAINT MANAGEMENT VIEW -->
+        <section class="view-section" id="complaints-view">
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title"><i class="fa-solid fa-list-check"></i> जनसमस्या एवं शिकायत निवारण पाइपलाइन</div>
+              <div class="panel-actions">
+                <select class="form-select" id="complaintWardFilter" style="width: auto;">
+                  <option value="ALL">सभी वार्ड / ग्राम पंचायत</option>
+                  <option value="हरनावदा गजा">हरनावदा गजा</option>
+                  <option value="झालरापाटन">झालरापाटन</option>
+                  <option value="खेरखेड़ा">खेरखेड़ा</option>
+                  <option value="बघेर">बघेर</option>
+                </select>
+                <select class="form-select" id="complaintStatusFilter" style="width: auto;">
+                  <option value="ALL">सभी स्थितियां</option>
+                  <option value="New">New (नई)</option>
+                  <option value="Under Review">Under Review (समीक्षाधीन)</option>
+                  <option value="Forwarded">Forwarded (प्रेषित)</option>
+                  <option value="Action Taken">Action Taken (कार्रवाई जारी)</option>
+                  <option value="Resolved">Resolved (निस्तारित)</option>
+                  <option value="Closed">Closed (बंद)</option>
+                </select>
+                <button class="btn btn-primary" id="addComplaintBtn"><i class="fa-solid fa-plus"></i> नई शिकायत दर्ज करें</button>
+              </div>
+            </div>
+            <div class="panel-body">
+              <div class="table-responsive">
+                <table class="data-table" id="complaintsMainTable">
+                  <thead>
+                    <tr>
+                      <th>आईडी</th>
+                      <th>शिकायतकर्ता</th>
+                      <th>मोबाईल</th>
+                      <th>स्थान / वार्ड</th>
+                      <th>श्रेणी</th>
+                      <th>स्थिति पाइपलाइन</th>
+                      <th>दिनांक</th>
+                      <th>कार्रवाई</th>
+                    </tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 3. DEVELOPMENT WORK TRACKER VIEW -->
+        <section class="view-section" id="dev-works-view">
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title"><i class="fa-solid fa-road"></i> विकास कार्य एवं प्रगति ट्रैकर (Development Works)</div>
+              <div class="panel-actions">
+                <button class="btn btn-primary" id="addDevWorkBtn"><i class="fa-solid fa-plus"></i> नया विकास कार्य जोड़ें</button>
+              </div>
+            </div>
+            <div class="panel-body">
+              <div class="table-responsive">
+                <table class="data-table" id="devWorksTable">
+                  <thead>
+                    <tr>
+                      <th>कार्य आईडी</th>
+                      <th>कार्य का नाम एवं स्थान</th>
+                      <th>स्वीकृत राशि (₹ लाख)</th>
+                      <th>प्रगति (%)</th>
+                      <th>स्थिति</th>
+                      <th>फोटो साक्ष्य</th>
+                      <th>कार्रवाई</th>
+                    </tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 4. GOVERNMENT OFFICER DIRECTORY VIEW -->
+        <section class="view-section" id="officers-view">
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title"><i class="fa-solid fa-building-columns"></i> सरकारी अधिकारी डायरेक्टरी (Govt. Officers)</div>
+              <div class="panel-actions">
+                <button class="btn btn-primary" id="addOfficerBtn"><i class="fa-solid fa-user-plus"></i> नया अधिकारी जोड़ें</button>
+              </div>
+            </div>
+            <div class="panel-body">
+              <div class="table-responsive">
+                <table class="data-table" id="officersTable">
+                  <thead>
+                    <tr>
+                      <th>अधिकारी का नाम</th>
+                      <th>पदनाम / विभाग</th>
+                      <th>मोबाईल / ईमेल</th>
+                      <th>क्षेत्र / कार्यालय</th>
+                      <th>आधिकारिक स्रोत URL</th>
+                      <th>सत्यापन अवस्था</th>
+                      <th>कार्रवाई</th>
+                    </tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 5. ELECTION DATA CENTER VIEW -->
+        <section class="view-section" id="election-data-view">
+          <div class="election-policy-banner">
+            <i class="fa-solid fa-shield-halved"></i>
+            <div>
+              <strong>नीतिगत दिशा-निर्देश एवं चेतावनी (Strict Data Policy Warning):</strong>
+              <p>व्यक्तियों की व्यक्तिगत राजनीतिक प्रोफाइलिंग सख्त वर्जित है। यह डेटा सेंटर केवल विधानसभा क्षेत्र 198 (झालरापाटन) के अंतर्गत बूथ-स्तरीय कुल मतदान, सार्वजनिक बुनियादी समस्याओं और सामुदायिक विकास सम्बन्धी आंकड़ों के प्रशासनिक प्रबन्धन हेतु है।</p>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title"><i class="fa-solid fa-box-archive"></i> झालरापाटन (AC-198) बूथ डेटा सेंटर</div>
+              <div class="panel-actions">
+                <select class="form-select" id="dataVersionSelect" style="width: auto;">
+                  <option value="v2024.1">संस्करण: v2024.1 (हालिया संशोधन)</option>
+                  <option value="v2023.2">संस्करण: v2023.2 (विधानसभा चुनाव)</option>
+                </select>
+                <button class="btn btn-secondary btn-sm" id="csvExportSimulatorBtn"><i class="fa-solid fa-file-export"></i> CSV Export Simulator</button>
+                <button class="btn btn-primary btn-sm" id="addBoothBtn"><i class="fa-solid fa-plus"></i> बूथ डेटा जोड़ें</button>
+              </div>
+            </div>
+            <div class="panel-body">
+              <div class="table-responsive">
+                <table class="data-table" id="boothsTable">
+                  <thead>
+                    <tr>
+                      <th>बूथ नं.</th>
+                      <th>बूथ का नाम एवं स्थान</th>
+                      <th>कुल मतदाता</th>
+                      <th>पुरुष / महिला</th>
+                      <th>मतदान %</th>
+                      <th>मुख्य स्थानीय मुद्दे</th>
+                      <th>कार्रवाई</th>
+                    </tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 6. SOCIAL MEDIA & CONTACT MANAGER VIEW -->
+        <section class="view-section" id="social-media-view">
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title"><i class="fa-solid fa-share-nodes"></i> सोशल मीडिया एवं टीम सम्पर्क प्रबन्धन</div>
+              <div class="panel-actions">
+                <button class="btn btn-primary" id="addSocialBtn"><i class="fa-solid fa-plus"></i> नया चैनल / सम्पर्क जोड़ें</button>
+              </div>
+            </div>
+            <div class="panel-body">
+              <div class="table-responsive">
+                <table class="data-table" id="socialMediaTable">
+                  <thead>
+                    <tr>
+                      <th>प्लेटफॉर्म</th>
+                      <th>शीर्षक / हैन्डल</th>
+                      <th>सम्पर्क लिंक / नंबर</th>
+                      <th>सक्रिय स्थिति</th>
+                      <th>कार्रवाई</th>
+                    </tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 7. VERIFICATION WORKFLOW MANAGER VIEW -->
+        <section class="view-section" id="verification-view">
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title"><i class="fa-solid fa-check-double"></i> सत्यापन समीक्षा कतार (Draft → Source Verify → Publish)</div>
+            </div>
+            <div class="panel-body">
+              <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 16px;">
+                जो भी नए अधिकारी संपर्क, विकास कार्य या सार्वजनिक डेटा प्रविष्टियां ड्राफ्ट (Draft) स्थिति में हैं, उन्हें प्रकाशित करने से पूर्व आधिकारिक स्रोत लिंक के साथ सत्यापित करें।
+              </p>
+              <div class="table-responsive">
+                <table class="data-table" id="verificationQueueTable">
+                  <thead>
+                    <tr>
+                      <th>आईडी / प्रकार</th>
+                      <th>शीर्षक / विवरण</th>
+                      <th>प्रविष्टि तिथि</th>
+                      <th>आधिकारिक स्रोत URL</th>
+                      <th>वर्तमान स्थिति</th>
+                      <th>सत्यापन कार्रवाई</th>
+                    </tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 8. AUDIT LOGS VIEWER -->
+        <section class="view-section" id="audit-logs-view">
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title"><i class="fa-solid fa-file-shield"></i> प्रशासनिक कार्य इतिहास (Audit Trail Logs)</div>
+              <div class="panel-actions">
+                <button class="btn btn-secondary btn-sm" id="clearAuditLogsBtn"><i class="fa-solid fa-trash-can"></i> फिल्टर / साफ़ करें</button>
+              </div>
+            </div>
+            <div class="panel-body">
+              <div class="audit-timeline" id="auditLogsTimeline">
+                <!-- Rendered dynamically -->
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 9. REPORTS & ANALYTICS -->
+        <section class="view-section" id="reports-view">
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title"><i class="fa-solid fa-chart-line"></i> रिपोर्ट एवं विश्लेषणात्मक निर्यात (Export Reports)</div>
+            </div>
+            <div class="panel-body">
+              <div class="form-row">
+                <div class="stat-card" style="border-left-color: var(--gold-primary);">
+                  <h4><i class="fa-solid fa-file-csv"></i> शिकायत रिपोर्ट (Complaints Report)</h4>
+                  <p style="font-size: 0.8rem; color: var(--text-muted); margin: 8px 0 16px;">क्षेत्रवार, स्थिति एवं श्रेणी अनुसार सम्पूर्ण शिकायतों की एक्सेल/सीएसवी रिपोर्ट।</p>
+                  <button class="btn btn-sm btn-primary" onclick="exportData('complaints', 'csv')">CSV डाउनलोड करें</button>
+                  <button class="btn btn-sm btn-secondary" onclick="exportData('complaints', 'pdf')">PDF प्रिंट बनाएं</button>
+                </div>
+
+                <div class="stat-card" style="border-left-color: var(--status-resolved);">
+                  <h4><i class="fa-solid fa-file-invoice"></i> विकास कार्य प्रगति रिपोर्ट</h4>
+                  <p style="font-size: 0.8rem; color: var(--text-muted); margin: 8px 0 16px;">हरनावदा गजा क्षेत्र में जारी एवं पूर्ण विकास कार्यों का संपूर्ण विवरण।</p>
+                  <button class="btn btn-sm btn-primary" onclick="exportData('dev_works', 'csv')">CSV डाउनलोड करें</button>
+                  <button class="btn btn-sm btn-secondary" onclick="exportData('dev_works', 'pdf')">PDF प्रिंट बनाएं</button>
+                </div>
+
+                <div class="stat-card" style="border-left-color: var(--status-new);">
+                  <h4><i class="fa-solid fa-building-columns"></i> अधिकारी डायरेक्टरी सूची</h4>
+                  <p style="font-size: 0.8rem; color: var(--text-muted); margin: 8px 0 16px;">सत्यापित सरकारी अधिकारियों की फोन नंबर एवं ईमेल युक्त सूची।</p>
+                  <button class="btn btn-sm btn-primary" onclick="exportData('officers', 'csv')">CSV डाउनलोड करें</button>
+                  <button class="btn btn-sm btn-secondary" onclick="exportData('officers', 'pdf')">PDF प्रिंट बनाएं</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 10. APP SETTINGS & DISCLAIMER -->
+        <section class="view-section" id="settings-view">
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title"><i class="fa-solid fa-sliders"></i> एप्लिकेशन कॉन्फ़िगरेशन एवं गैर-सरकारी अस्वीकरण</div>
+            </div>
+            <div class="panel-body">
+              <form id="appSettingsForm">
+                <div class="form-group">
+                  <label class="form-label">पोर्टल / टीम का नाम</label>
+                  <input type="text" class="form-control" id="settingSiteName" value="टीम गोपालसिंह – हरनावदा गजा">
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">राजस्थान सम्पर्क पोर्टल यूआरएल (Official Grievance Portal Link)</label>
+                  <input type="url" class="form-control" id="settingSamparkUrl" value="https://sampark.rajasthan.gov.in/">
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">गैर-सरकारी अस्वीकरण बैनर टेक्स्ट (Non-Government Disclaimer Text)</label>
+                  <textarea class="form-control" id="settingDisclaimerText" rows="3">यह एक स्वतंत्र सामाजिक एवं विकास सेवा मंच है। यह किसी भी सरकारी विभाग का आधिकारिक पोर्टल नहीं है। सरकारी शिकायत पंजीकरण हेतु राजस्थान सम्पर्क पोर्टल (181) का उपयोग करें।</textarea>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">मुख्य टीम हेल्पलाइन नंबर</label>
+                  <input type="text" class="form-control" id="settingHelpline" value="+91 98290 12345">
+                </div>
+
+                <button type="submit" class="btn btn-primary"><i class="fa-solid fa-floppy-disk"></i> सेटिंग्स सुरक्षित करें</button>
+              </form>
+            </div>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <!-- MODAL: Complaint Action & Details -->
+  <div class="modal-overlay" id="complaintModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title"><i class="fa-solid fa-clipboard-question"></i> शिकायत विवरण एवं निस्तारण कार्रवाई</div>
+        <button class="modal-close-btn" onclick="closeModal('complaintModal')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body" id="complaintModalBody">
+        <!-- Dynamic content filled by JS -->
+      </div>
+      <div class="modal-footer" id="complaintModalFooter">
+        <button class="btn btn-secondary" onclick="closeModal('complaintModal')">रद्द करें</button>
+        <button class="btn btn-primary" id="saveComplaintActionBtn">अद्यतन (Update) करें</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Add/Edit Government Officer -->
+  <div class="modal-overlay" id="officerModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title"><i class="fa-solid fa-user-tie"></i> अधिकारी विवरण दर्ज/संशोधित करें</div>
+        <button class="modal-close-btn" onclick="closeModal('officerModal')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <form id="officerForm">
+          <input type="hidden" id="officerId">
+          <div class="form-group">
+            <label class="form-label">अधिकारी का पूरा नाम</label>
+            <input type="text" class="form-control" id="officerName" required placeholder="उदा. श्री राजेश शर्मा">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">पदनाम (Designation)</label>
+              <input type="text" class="form-control" id="officerDesignation" required placeholder="उदा. अधिशासी अभियंता (PWD)">
+            </div>
+            <div class="form-group">
+              <label class="form-label">विभाग (Department)</label>
+              <input type="text" class="form-control" id="officerDept" required placeholder="उदा. सार्वजनिक निर्माण विभाग">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">मोबाइल नंबर</label>
+              <input type="text" class="form-control" id="officerPhone" required placeholder="+91 XXXXX XXXXX">
+            </div>
+            <div class="form-group">
+              <label class="form-label">ईमेल आईडी</label>
+              <input type="email" class="form-control" id="officerEmail" placeholder="officer@rajasthan.gov.in">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">आधिकारिक स्रोत यूआरएल (Official Source URL)</label>
+            <input type="url" class="form-control" id="officerSourceUrl" placeholder="https://rajasthan.gov.in/officer-directory/123">
+          </div>
+          <div class="form-group">
+            <label class="form-label">सत्यापन स्थिति (Verification State)</label>
+            <select class="form-select" id="officerVerifyStatus">
+              <option value="Draft">Draft (लंबित सत्यापन)</option>
+              <option value="Verified">Verified (सत्यापित)</option>
+            </select>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('officerModal')">रद्द करें</button>
+        <button class="btn btn-primary" onclick="saveOfficerForm()">सुरक्षित करें</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Add/Edit Development Work -->
+  <div class="modal-overlay" id="devWorkModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title"><i class="fa-solid fa-person-digging"></i> विकास कार्य की जानकारी</div>
+        <button class="modal-close-btn" onclick="closeModal('devWorkModal')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <form id="devWorkForm">
+          <input type="hidden" id="devWorkId">
+          <div class="form-group">
+            <label class="form-label">कार्य का नाम (Project Title)</label>
+            <input type="text" class="form-control" id="devTitle" required placeholder="उदा. मुख्य बस स्टैंड से माताजी मंदिर तक सीसी रोड">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">स्थान / वार्ड</label>
+              <input type="text" class="form-control" id="devLocation" required value="हरनावदा गजा">
+            </div>
+            <div class="form-group">
+              <label class="form-label">स्वीकृत राशि (₹ लाख)</label>
+              <input type="number" step="0.01" class="form-control" id="devAmount" required placeholder="15.50">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">कार्य की वर्तमान प्रगति (%): <span id="progressValDisplay" style="color: var(--gold-light);">0%</span></label>
+            <input type="range" class="range-slider" id="devProgress" min="0" max="100" value="0" oninput="document.getElementById('progressValDisplay').innerText = this.value + '%'">
+          </div>
+          <div class="form-group">
+            <label class="form-label">स्थिति (Status)</label>
+            <select class="form-select" id="devStatus">
+              <option value="स्वीकृत">स्वीकृत (Sanctioned)</option>
+              <option value="निर्माणाधीन">निर्माणाधीन (Under Construction)</option>
+              <option value="पूर्ण">पूर्ण (Completed)</option>
+            </select>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('devWorkModal')">रद्द करें</button>
+        <button class="btn btn-primary" onclick="saveDevWorkForm()">सुरक्षित करें</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Add Social Media Link -->
+  <div class="modal-overlay" id="socialModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title"><i class="fa-solid fa-share-nodes"></i> सोशल मीडिया सम्पर्क जोड़ें/बदलें</div>
+        <button class="modal-close-btn" onclick="closeModal('socialModal')"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <form id="socialForm">
+          <input type="hidden" id="socialId">
+          <div class="form-group">
+            <label class="form-label">प्लेटफॉर्म चुनें</label>
+            <select class="form-select" id="socialPlatform">
+              <option value="WhatsApp">WhatsApp (व्हाट्सएप)</option>
+              <option value="Call">Call Number (हेल्पलाइन फोन)</option>
+              <option value="Facebook">Facebook (फेसबुक)</option>
+              <option value="Instagram">Instagram (इंस्टाग्राम)</option>
+              <option value="YouTube">YouTube (यूट्यूब)</option>
+              <option value="Twitter">Twitter / X (ट्विटर)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">शीर्षक / विवरण</label>
+            <input type="text" class="form-control" id="socialTitle" required placeholder="उदा. मुख्य हेल्पलाइन नंबर">
+          </div>
+          <div class="form-group">
+            <label class="form-label">लिंक / नंबर (URL or Phone Number)</label>
+            <input type="text" class="form-control" id="socialLink" required placeholder="https://wa.me/919829012345 या +91 98290 12345">
+          </div>
+          <div class="form-group">
+            <label class="form-label">स्थिति</label>
+            <select class="form-select" id="socialActive">
+              <option value="true">सक्रिय (Active)</option>
+              <option value="false">निष्क्रिय (Inactive)</option>
+            </select>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal('socialModal')">रद्द करें</button>
+        <button class="btn btn-primary" onclick="saveSocialForm()">सुरक्षित करें</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main JavaScript Application -->
+  <script src="js/admin_app.js"></script>
+</body>
+</html>

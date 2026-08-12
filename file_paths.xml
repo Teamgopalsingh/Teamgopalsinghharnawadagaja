@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Internal cache directory for generated PDFs, reports, and compressed images -->
+    <cache-path name="shared_cache" path="." />
+    <!-- External cache directory for temporary image attachments -->
+    <external-cache-path name="shared_external_cache" path="." />
+    <!-- Files directory for offline complaint attachments -->
+    <files-path name="shared_files" path="documents/" />
+</paths>
